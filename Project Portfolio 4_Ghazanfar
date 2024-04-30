@@ -1,0 +1,65 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+file_path = 'zomato_restaurants_in_India.csv'
+data = pd.read_csv(file_path)
+
+# Data Cleaning and Preparation
+# Handling missing values
+data.dropna(inplace=True)  # or you can use data.fillna(method='ffill') to fill missing values
+
+# Detecting and correcting inconsistencies
+# Example: Correcting data types
+data['aggregate_rating'] = pd.to_numeric(data['aggregate_rating'], errors='coerce')  # Convert aggregate_rating to numeric
+
+# Feature engineering
+# Example: Extracting a new feature
+data['is_expensive'] = data['price_range'].apply(lambda x: 'Yes' if x > 3 else 'No')
+
+# Exploratory Data Analysis
+# Descriptive Statistics
+print(data.describe())
+
+# Distribution Analysis
+sns.histplot(data['aggregate_rating'], kde=True)
+plt.title('Distribution of Aggregate Ratings')
+plt.show()
+
+# Correlation Analysis
+plt.figure(figsize=(10, 6))
+sns.heatmap(data.corr(), annot=True, fmt=".2f")
+plt.title('Correlation Matrix')
+plt.show()
+
+# Regional Analysis
+# Grouping by city to compare trends
+city_group = data.groupby('city').mean()
+print(city_group[['aggregate_rating', 'price_range']])
+
+# Customer Preference Analysis
+# Popular cuisines in different regions
+popular_cuisines = data.groupby('city')['cuisines'].apply(lambda x: x.mode()[0])
+print(popular_cuisines)
+
+# Competitive Analysis
+# Identifying major competitors
+competitors = data.groupby('city')['name'].value_counts().nlargest(5)
+print(competitors)
+
+# Market Gap Analysis
+# Identifying gaps in market
+unique_cuisines = data['cuisines'].unique()
+print(f"Unique cuisines available: {unique_cuisines}")
+
+# Designing the Marketing Campaign
+# Propose strategies based on insights
+# Example: Targeting strategies
+print("Target regions with high aggregate ratings but fewer expensive restaurants for premium campaigns.")
+
+# Presentation of Findings
+# Summary report generation and visualization (can be expanded as needed)
+
+# Save all findings into a report (not coded here)
